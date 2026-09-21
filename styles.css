@@ -1,0 +1,415 @@
+/* ============================================================
+   Flores amarillas 🌻 — hecho por Sebas
+   ============================================================ */
+
+:root {
+  --dvh: 1vh;
+  --sky-top: #3f9ee8;
+  --sky-mid: #7fc6f6;
+  --sky-low: #c3e8fc;
+  --sky-hor: #eaf8ff;
+  --ink: #134a7c;
+  --brown: #8a4b00;
+  /* tamaño de referencia de las flores del campo */
+  --base: min(22vw, calc(var(--dvh) * 14), 130px);
+}
+@supports (height: 1dvh) {
+  :root { --dvh: 1dvh; }
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--sky-mid);
+  color: var(--ink);
+  font-family: 'Quicksand', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ---------- Cielo ---------- */
+.sky {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg,
+    var(--sky-top) 0%,
+    var(--sky-mid) 38%,
+    var(--sky-low) 72%,
+    var(--sky-hor) 100%);
+}
+
+.sun {
+  position: absolute;
+  top: -70px;
+  right: -60px;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    #fffbe3 0 20%,
+    rgba(255, 244, 160, .9) 24%,
+    rgba(255, 236, 140, .35) 46%,
+    rgba(255, 236, 140, 0) 70%);
+}
+.sun::before {
+  content: "";
+  position: absolute;
+  inset: -140px;
+  background: repeating-conic-gradient(rgba(255, 255, 255, .3) 0 5deg, transparent 5deg 16deg);
+  -webkit-mask: radial-gradient(circle, #000 18%, transparent 66%);
+  mask: radial-gradient(circle, #000 18%, transparent 66%);
+  animation: spin 120s linear infinite;
+}
+
+.cloud {
+  position: absolute;
+  left: 0;
+  top: var(--y);
+  width: var(--w);
+  opacity: var(--o);
+  animation: drift var(--t) linear var(--d) infinite;
+  will-change: transform;
+}
+.cloud svg { display: block; width: 100%; height: auto; }
+
+@keyframes drift {
+  from { transform: translateX(-320px); }
+  to   { transform: translateX(calc(100vw + 320px)); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Escena ---------- */
+#scene {
+  position: fixed;
+  inset: 0;
+  transition: opacity .7s ease;
+}
+#scene.hide { opacity: 0; }
+
+/* ============================================================
+   1 · Intro
+   ============================================================ */
+.intro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .35em;
+  padding: 0 7vw 6vh;
+  text-align: center;
+  font-family: 'Dancing Script', 'Segoe Script', cursive;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 2px rgba(19, 74, 124, .45), 0 6px 22px rgba(19, 74, 124, .45);
+  pointer-events: none;
+  transition: opacity 1s ease, transform 1s ease;
+}
+.intro p {
+  font-size: clamp(2.1rem, 9.5vw, 3.8rem);
+  line-height: 1.18;
+  max-width: 14em;
+}
+.intro .l1 { --b: .6s; }
+.intro .l2 { --b: 3.4s; }
+
+.intro .w {
+  display: inline-block;
+  white-space: pre;
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(6px);
+}
+body.s-intro .intro .w {
+  animation: wordIn 1s cubic-bezier(.2, .7, .2, 1) calc(var(--b) + var(--i) * .3s) forwards;
+}
+@keyframes wordIn {
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
+.mini-wrap {
+  width: clamp(72px, 20vw, 110px);
+  margin-top: .5rem;
+  opacity: 0;
+  transform: scale(0) rotate(-200deg);
+}
+body.s-intro .mini-wrap {
+  animation: miniIn 1.4s cubic-bezier(.2, 1.3, .4, 1) 5.1s forwards;
+}
+.mini { display: block; width: 100%; height: auto; animation: spin 24s linear infinite; }
+@keyframes miniIn { to { opacity: 1; transform: none; } }
+
+body.s-introOut .intro {
+  opacity: 0;
+  transform: translateY(-24px);
+}
+
+/* ============================================================
+   2 · Campo de girasoles
+   ============================================================ */
+.field {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--dvh) * 66);
+  overflow: hidden;
+  pointer-events: none;
+}
+.layer { position: absolute; inset: 0; }
+
+.hill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: var(--hh);
+  transform: translateY(105%);
+  transition: transform 2.2s cubic-bezier(.2, .8, .2, 1) var(--hd);
+}
+.hill svg { display: block; width: 100%; height: 100%; }
+body.s-field .hill { transform: none; }
+
+.flower {
+  position: absolute;
+  bottom: var(--by);
+  left: var(--x);
+  width: var(--w);
+  margin-left: calc(var(--w) / -2);
+  transform-origin: 50% 100%;
+  transform: scale(0);
+}
+.flower svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  transform-origin: 50% 100%;
+}
+body.s-field .flower {
+  animation: grow 1.9s cubic-bezier(.2, .9, .25, 1.1) var(--gd) forwards;
+}
+body.s-field .flower svg {
+  animation: sway var(--st) ease-in-out var(--sd) infinite alternate;
+}
+@keyframes grow {
+  0%   { transform: translateY(28%) scale(.04); }
+  60%  { transform: translateY(0) scale(1.06); }
+  100% { transform: none; }
+}
+@keyframes sway {
+  from { transform: rotate(-2.3deg); }
+  to   { transform: rotate(2.3deg); }
+}
+
+/* abejitas */
+.bee {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 38px;
+  opacity: 0;
+  pointer-events: none;
+}
+.bee svg { display: block; width: 100%; height: auto; animation: bob .45s ease-in-out infinite alternate; }
+.bee.b2 { width: 30px; }
+.bee.b2 svg { transform: scaleX(-1); }
+.bee .wing { transform-box: fill-box; transform-origin: 50% 100%; animation: flap .09s linear infinite alternate; }
+body.s-field .bee.b1 { animation: beeA 26s ease-in-out 4.5s infinite; }
+body.s-field .bee.b2 { animation: beeB 32s ease-in-out 10s infinite; }
+
+@keyframes bob  { from { translate: 0 -3px; } to { translate: 0 3px; } }
+@keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(.3); } }
+@keyframes beeA {
+  0%   { opacity: 0; transform: translate(-12vw, 62vh); }
+  5%   { opacity: 1; }
+  25%  { transform: translate(20vw, 50vh); }
+  45%  { transform: translate(44vw, 66vh); }
+  65%  { transform: translate(70vw, 47vh); }
+  85%  { transform: translate(96vw, 58vh); }
+  95%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(118vw, 52vh); }
+}
+@keyframes beeB {
+  0%   { opacity: 0; transform: translate(116vw, 42vh); }
+  5%   { opacity: 1; }
+  30%  { transform: translate(78vw, 58vh); }
+  55%  { transform: translate(46vw, 44vh); }
+  80%  { transform: translate(16vw, 60vh); }
+  95%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(-14vw, 52vh); }
+}
+
+/* ============================================================
+   3 · Ramo y mensaje
+   ============================================================ */
+.finale {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top) 16px calc(env(safe-area-inset-bottom) + 10px);
+  pointer-events: none;
+}
+
+.glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(150vw, 980px);
+  aspect-ratio: 1;
+  translate: -50% -42%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side,
+    rgba(255, 252, 226, .98),
+    rgba(255, 249, 205, .92) 38%,
+    rgba(255, 244, 170, .5) 64%,
+    rgba(255, 240, 150, 0) 100%);
+  opacity: 0;
+  transform: scale(.6);
+}
+body.s-bouquet .glow { animation: glowIn 2.2s ease .1s forwards; }
+@keyframes glowIn { to { opacity: 1; transform: none; } }
+
+.title, .sub, .bouquet-wrap { position: relative; }
+
+.title {
+  font-family: 'Dancing Script', 'Segoe Script', cursive;
+  font-weight: 700;
+  font-size: clamp(3.8rem, 18vw, 6.6rem);
+  line-height: 1.05;
+  color: var(--brown);
+  text-shadow: 0 2px 0 rgba(255, 255, 255, .75), 0 8px 26px rgba(255, 190, 0, .5);
+}
+.title span {
+  display: inline-block;
+  padding: 0 .12em;
+  clip-path: inset(-30% 100% -30% -5%);
+}
+body.s-bouquet .title span {
+  animation: wipe 1.9s cubic-bezier(.5, 0, .2, 1) 1.5s forwards;
+}
+@keyframes wipe { to { clip-path: inset(-30% -10% -30% -5%); } }
+
+.sub {
+  margin-top: .1rem;
+  font-weight: 600;
+  font-size: clamp(.78rem, 3.5vw, 1.05rem);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-align: center;
+  text-wrap: balance;
+  color: var(--ink);
+  opacity: 0;
+  transform: translateY(8px);
+}
+body.s-bouquet .sub { animation: fadeUp 1.3s ease 3.1s forwards; }
+@keyframes fadeUp { to { opacity: 1; transform: none; } }
+
+.bouquet-wrap {
+  width: min(86vw, calc(var(--dvh) * 44), 400px);
+  margin-top: .9rem;
+  opacity: 0;
+  transform: translateY(90px) scale(.86);
+}
+body.s-bouquet .bouquet-wrap {
+  animation: rise 1.7s cubic-bezier(.2, .85, .25, 1) .2s forwards;
+}
+@keyframes rise { to { opacity: 1; transform: none; } }
+
+.bouquet {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  transform-origin: 50% 100%;
+}
+body.s-bouquet .bouquet { animation: bqSway 6s ease-in-out 2s infinite alternate; }
+@keyframes bqSway {
+  from { transform: rotate(-1.1deg); }
+  to   { transform: rotate(1.1deg); }
+}
+
+.pop {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+}
+body.s-bouquet .pop {
+  animation: pop .9s cubic-bezier(.2, 1.4, .4, 1) calc(.6s + var(--i) * .17s) forwards;
+}
+@keyframes pop { to { transform: scale(1); } }
+
+/* ---------- Pétalos ---------- */
+#petals {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 4;
+}
+.petal {
+  position: absolute;
+  top: 0;
+  left: var(--l, 0);
+  width: var(--s);
+  height: calc(var(--s) * 1.5);
+  border-radius: 100% 0 100% 0;
+  background: linear-gradient(160deg, #ffe867, #ffb000);
+  opacity: .95;
+  will-change: transform;
+}
+.petal.fall { animation: fall var(--dur) linear var(--del) infinite both; }
+.petal.burst { animation: burst 1.8s ease-out forwards; }
+
+@keyframes fall {
+  0%   { transform: translate3d(0, -14vh, 0) rotate(0deg); }
+  25%  { transform: translate3d(calc(var(--dx) * .5), 18vh, 0) rotate(120deg); }
+  50%  { transform: translate3d(calc(var(--dx) * -.3), 50vh, 0) rotate(240deg); }
+  75%  { transform: translate3d(calc(var(--dx) * .6), 84vh, 0) rotate(360deg); }
+  100% { transform: translate3d(var(--dx), 116vh, 0) rotate(480deg); }
+}
+@keyframes burst {
+  0%   { transform: translate(0, 0) rotate(0) scale(.4); opacity: 1; }
+  40%  { transform: translate(calc(var(--dx) * .7), calc(var(--dy) * .7)) rotate(calc(var(--r) * .5)) scale(1); }
+  100% { transform: translate(var(--dx), calc(var(--dy) + 60vh)) rotate(var(--r)) scale(.8); opacity: 0; }
+}
+
+/* ---------- Botón ---------- */
+#replay {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 14px);
+  translate: -50% 0;
+  z-index: 5;
+  border: 0;
+  border-radius: 999px;
+  padding: .6rem 1.15rem;
+  font: 600 .9rem 'Quicksand', system-ui, sans-serif;
+  color: var(--ink);
+  background: rgba(255, 255, 255, .85);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 14px rgba(20, 80, 140, .22);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .9s ease;
+}
+body.s-done #replay { opacity: 1; pointer-events: auto; }
+
+/* ---------- Menos movimiento ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .sun::before, .flower svg, .bouquet, .mini { animation: none !important; }
+  .bee, .petal { display: none; }
+}

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#3f9ee8">
+  <title>Para ti 🌻</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Cielo -->
+  <div class="sky" aria-hidden="true">
+    <div class="sun"></div>
+    <div class="clouds" id="clouds"></div>
+  </div>
+
+  <div id="scene">
+
+    <!-- 1 · Mensaje inicial -->
+    <section class="intro" id="intro">
+      <p class="l1" id="introLine1"></p>
+      <p class="l2" id="introLine2"></p>
+      <div class="mini-wrap" aria-hidden="true">
+        <svg class="mini" viewBox="0 0 100 100"><use href="#sf-head"/></svg>
+      </div>
+    </section>
+
+    <!-- 2 · Campo de girasoles -->
+    <div class="field" id="field" aria-hidden="true"></div>
+    <div class="bee b1" id="bee1" aria-hidden="true"></div>
+    <div class="bee b2" id="bee2" aria-hidden="true"></div>
+
+    <!-- 3 · Ramo + "Para ti" -->
+    <section class="finale" id="finale">
+      <div class="glow" aria-hidden="true"></div>
+      <h1 class="title"><span id="title"></span></h1>
+      <p class="sub" id="subtitle"></p>
+
+      <div class="bouquet-wrap">
+        <svg class="bouquet" viewBox="0 0 320 440" role="img" aria-label="Un ramo de girasoles">
+          <defs>
+            <linearGradient id="bqLeaf" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#6cc94a"/><stop offset="1" stop-color="#2f8a2a"/>
+            </linearGradient>
+            <linearGradient id="bqPaperBack" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#c9e8fb"/><stop offset="1" stop-color="#8ec8ee"/>
+            </linearGradient>
+            <linearGradient id="bqPaperFront" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#f6ead0"/>
+            </linearGradient>
+            <linearGradient id="bqRibbon" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffd54a"/><stop offset="1" stop-color="#f0a800"/>
+            </linearGradient>
+          </defs>
+
+          <g class="bq-sway">
+            <!-- hojas -->
+            <g fill="url(#bqLeaf)" stroke="#2c7a26" stroke-width="1">
+              <path d="M0 0 C 18 -34 62 -46 96 -34 C 76 -4 30 10 0 0Z" transform="translate(160 130) rotate(-128) scale(1.15)"/>
+              <path d="M0 0 C 18 -34 62 -46 96 -34 C 76 -4 30 10 0 0Z" transform="translate(160 130) rotate(-52) scale(1.15)"/>
+              <path d="M0 0 C 18 -34 62 -46 96 -34 C 76 -4 30 10 0 0Z" transform="translate(74 240) rotate(-160) scale(.85)"/>
+              <path d="M0 0 C 18 -34 62 -46 96 -34 C 76 -4 30 10 0 0Z" transform="translate(246 240) rotate(-20) scale(.85)"/>
+            </g>
+
+            <!-- florecitas azules (las rellena script.js) -->
+            <g id="bqFiller"></g>
+
+            <!-- tallos -->
+            <g id="bqStems" stroke="#3f9a2b" stroke-width="6" stroke-linecap="round" fill="none"></g>
+
+            <!-- papel de atrás -->
+            <path d="M30 205 Q160 255 290 205 L174 432 Q160 438 146 432 Z" fill="url(#bqPaperBack)" stroke="#7fbce6" stroke-width="1.5" stroke-linejoin="round"/>
+
+            <!-- girasoles, de atrás hacia adelante -->
+            <g class="pop" style="--i:0"><use href="#sf-head" x="-56" y="-56" width="112" height="112" transform="translate(160 86) rotate(-4)"/></g>
+            <g class="pop" style="--i:1"><use href="#sf-head" x="-52" y="-52" width="104" height="104" transform="translate(84 118) rotate(-14)"/></g>
+            <g class="pop" style="--i:2"><use href="#sf-head" x="-52" y="-52" width="104" height="104" transform="translate(236 118) rotate(12)"/></g>
+            <g class="pop" style="--i:3"><use href="#sf-head" x="-44" y="-44" width="88"  height="88"  transform="translate(52 184) rotate(-22)"/></g>
+            <g class="pop" style="--i:4"><use href="#sf-head" x="-44" y="-44" width="88"  height="88"  transform="translate(268 184) rotate(22)"/></g>
+            <g class="pop" style="--i:5"><use href="#sf-head" x="-62" y="-62" width="124" height="124" transform="translate(160 150) rotate(3)"/></g>
+            <g class="pop" style="--i:6"><use href="#sf-head" x="-42" y="-42" width="84"  height="84"  transform="translate(104 208) rotate(-10)"/></g>
+            <g class="pop" style="--i:7"><use href="#sf-head" x="-42" y="-42" width="84"  height="84"  transform="translate(216 208) rotate(10)"/></g>
+
+            <!-- papel de adelante -->
+            <path d="M58 226 Q160 272 262 226 L176 426 Q160 436 144 426 Z" fill="url(#bqPaperFront)" stroke="#e6d6ad" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M160 258 Q210 250 262 226 L176 426 Q168 434 160 436 Z" fill="#c8a25a" opacity=".13"/>
+            <path d="M100 246 L150 424 M222 246 L170 424" stroke="#c8a25a" stroke-opacity=".22" stroke-width="1.2" fill="none"/>
+            <path d="M58 226 Q160 272 262 226" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".95"/>
+
+            <!-- lazo -->
+            <path d="M84 290 Q160 312 236 290 L231 312 Q160 334 89 312 Z" fill="url(#bqRibbon)" stroke="#d18f00" stroke-width="1"/>
+            <g id="bow" fill="url(#bqRibbon)" stroke="#d18f00" stroke-width="1" stroke-linejoin="round">
+              <path d="M160 312 C 132 280, 104 296, 116 320 C 124 334, 148 326, 160 312Z"/>
+              <path d="M158 318 C 152 332, 146 342, 136 352 L 148 352 L 151 362 C 156 346, 160 334, 164 322Z"/>
+              <g transform="translate(320 0) scale(-1 1)">
+                <path d="M160 312 C 132 280, 104 296, 116 320 C 124 334, 148 326, 160 312Z"/>
+                <path d="M158 318 C 152 332, 146 342, 136 352 L 148 352 L 151 362 C 156 346, 160 334, 164 322Z"/>
+              </g>
+              <rect x="149" y="301" width="22" height="22" rx="8"/>
+            </g>
+
+            <!-- etiqueta -->
+            <g transform="translate(160 381) rotate(-5)">
+              <rect x="-28" y="-12" width="56" height="24" rx="7" fill="#fffaf0" stroke="#e3cf98" stroke-width="1"/>
+              <text id="bqTag" x="0" y="6" text-anchor="middle" font-family="'Dancing Script', cursive" font-weight="700" font-size="17" fill="#8a4b00"></text>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <div id="petals" aria-hidden="true"></div>
+  </div>
+
+  <button id="replay" type="button">↻ Ver de nuevo</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
