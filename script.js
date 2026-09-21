@@ -9,13 +9,14 @@
     intro: ['No pude comprar flores amarillas…', 'pero puedo hacer esto'],
     title: 'Para ti',
     subtitle: 'Feliz Día de las Flores Amarillas',
+    tagPrefix: 'de:',
     tag: 'Sebas',
     // milisegundos desde que abre la página
     timing: {
       introOut: 7600,  // el texto inicial se va
       field: 8000,     // crece el campo de girasoles
       bouquet: 12400,  // aparece el ramo y "Para ti"
-      done: 16500      // aparece el botón "Ver de nuevo"
+      done: 16500      // aparece "Desliza" y se puede bajar a los créditos
     }
   };
 
@@ -277,11 +278,12 @@
 
   function burst(x, y) {
     if (reduceMotion) return;
+    const box = petals().getBoundingClientRect(); // la portada puede estar desplazada
     for (let i = 0; i < 12; i++) {
       const p = document.createElement('div');
       p.className = 'petal burst';
       p.style.cssText =
-        `left:${x}px;top:${y}px;--s:${rand(9, 16).toFixed(1)}px;` +
+        `left:${x - box.left}px;top:${y - box.top}px;--s:${rand(9, 16).toFixed(1)}px;` +
         `--dx:${rand(-130, 130).toFixed(0)}px;--dy:${rand(-190, -60).toFixed(0)}px;--r:${rand(-400, 400).toFixed(0)}deg`;
       p.addEventListener('animationend', () => p.remove());
       petals().appendChild(p);
@@ -308,15 +310,41 @@
   function replay() {
     timers.forEach(clearTimeout);
     timers = [];
-    body.classList.remove('s-done');
-    $('#scene').classList.add('hide');
-    setTimeout(() => {
-      body.classList.remove(...STAGES);
-      petals().textContent = '';
-      void body.offsetWidth; // reinicia las animaciones CSS
-      $('#scene').classList.remove('hide');
-      play();
-    }, 800);
+    // primero subir a la portada (esperando a llegar de verdad), luego reiniciar
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const t0 = performance.now();
+    const check = () => {
+      if (window.scrollY > 2 && performance.now() - t0 < 2500) {
+        setTimeout(check, 50);
+        return;
+      }
+      window.scrollTo(0, 0);
+      body.classList.remove('s-done');
+      $('#scene').classList.add('hide');
+      setTimeout(() => {
+        body.classList.remove(...STAGES);
+        petals().textContent = '';
+        void body.offsetWidth; // reinicia las animaciones CSS
+        $('#scene').classList.remove('hide');
+        play();
+      }, 800);
+    };
+    check();
+  }
+
+  /* ---------- Créditos: aparecen al deslizar ---------- */
+  function watchReveals() {
+    const items = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      document.documentElement.classList.add('no-io');
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.25 });
+    items.forEach((el) => io.observe(el));
   }
 
   /* ============================================================
@@ -330,15 +358,17 @@
   words($('#introLine2'), CONFIG.intro[1]);
   $('#title').textContent = CONFIG.title;
   $('#subtitle').textContent = CONFIG.subtitle;
+  $('#bqTagPre').textContent = CONFIG.tagPrefix;
   $('#bqTag').textContent = CONFIG.tag;
   $('#bee1').innerHTML = BEE;
   $('#bee2').innerHTML = BEE.replace('id="beeClip"', 'id="beeClip2"').replace('url(#beeClip)', 'url(#beeClip2)');
 
   $('#replay').addEventListener('click', replay);
+  watchReveals();
 
-  // toca la pantalla al final y salen pétalos
-  document.addEventListener('pointerdown', (e) => {
-    if (!body.classList.contains('s-bouquet') || e.target.closest('#replay')) return;
+  // toca la portada al final y salen pétalos (click, no pointerdown: así deslizar no los activa)
+  document.addEventListener('click', (e) => {
+    if (!body.classList.contains('s-bouquet') || !e.target.closest('#scene')) return;
     burst(e.clientX, e.clientY);
   });
 
