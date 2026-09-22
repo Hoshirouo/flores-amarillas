@@ -477,8 +477,32 @@ body.s-done .hint { opacity: 1; animation: float 2.4s ease-in-out infinite; }
 .reveal.in { opacity: 1; transform: rotate(var(--r, 0deg)); }
 .no-io .reveal { opacity: 1; transform: rotate(var(--r, 0deg)); }
 
+/* ---------- Música ---------- */
+#mute {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 14px);
+  right: calc(env(safe-area-inset-right) + 14px);
+  z-index: 6;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  background: rgba(255, 255, 255, .85);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 14px rgba(20, 80, 140, .22);
+  cursor: pointer;
+}
+#mute svg { width: 21px; height: 21px; }
+#mute.playing svg { animation: bobIcon 1.6s ease-in-out infinite; }
+@keyframes bobIcon { 50% { transform: scale(1.08); } }
+
 /* ---------- Menos movimiento ---------- */
 @media (prefers-reduced-motion: reduce) {
   .sun::before, .flower svg, .bouquet, .mini, .hint, .hint span { animation: none !important; }
-  .bee, .petal { display: none; }
+  .bee, .petal, #mute.playing svg { animation: none !important; }
 }

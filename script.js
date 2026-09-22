@@ -363,6 +363,39 @@
   $('#bee1').innerHTML = BEE;
   $('#bee2').innerHTML = BEE.replace('id="beeClip"', 'id="beeClip2"').replace('url(#beeClip)', 'url(#beeClip2)');
 
+  /* ---------- Música de fondo ---------- */
+  const ICON_ON = 'M3 10v4h4l5 5V5L7 10H3Zm13.5 2a4.5 4.5 0 0 0-2.5-4.03v8.06A4.5 4.5 0 0 0 16.5 12Zm-2.5-8.85v2.06a7 7 0 0 1 0 13.58v2.06a9 9 0 0 0 0-17.7Z';
+  const ICON_OFF = 'M3 10v4h4l5 5V5L7 10H3Zm13.59 2 2.7-2.71-1.41-1.41L15.17 10l-2.7-2.71-1.42 1.42L13.76 11l-2.71 2.71 1.42 1.42L15.17 12.4l2.71 2.71 1.41-1.41L16.59 11Z';
+
+  function initMusic() {
+    const bgm = $('#bgm');
+    const btn = $('#mute');
+    const icon = $('#muteIcon');
+    bgm.volume = .55;
+
+    const paintIcon = () => {
+      icon.setAttribute('d', bgm.paused ? ICON_OFF : ICON_ON);
+      btn.classList.toggle('playing', !bgm.paused);
+      btn.setAttribute('aria-label', bgm.paused ? 'Reproducir música' : 'Silenciar música');
+    };
+    bgm.addEventListener('play', paintIcon);
+    bgm.addEventListener('pause', paintIcon);
+    paintIcon();
+
+    let userStopped = false;
+    const tryPlay = () => { if (!userStopped) bgm.play().catch(() => {}); };
+    tryPlay(); // funciona en algunos navegadores; en la mayoría el celular la bloquea hasta que toquen
+
+    // primer toque en cualquier parte de la página: arranca la música si el navegador la bloqueó
+    document.addEventListener('pointerdown', tryPlay, { once: true, passive: true });
+
+    btn.addEventListener('click', () => {
+      if (bgm.paused) { userStopped = false; tryPlay(); }
+      else { userStopped = true; bgm.pause(); }
+    });
+  }
+  initMusic();
+
   $('#replay').addEventListener('click', replay);
   watchReveals();
 
